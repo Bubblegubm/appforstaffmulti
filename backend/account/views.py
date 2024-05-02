@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -24,6 +26,7 @@ def register(request):
     """
     if request.method == 'POST':
         data = json.loads(request.body) # Использование JSON
+        logger.debug(data)
         user_form = UserRegistrationForm(data)
         if user_form.is_valid():
             new_user = user_form.save(commit=False)

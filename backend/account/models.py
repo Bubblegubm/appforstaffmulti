@@ -8,7 +8,6 @@ class Organization(models.Model):
 
     class Meta:
         verbose_name_plural = "Производитель"
-
     def __str__(self):
         return self.name
 

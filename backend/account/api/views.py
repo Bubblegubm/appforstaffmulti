@@ -3,7 +3,7 @@ from requests import Response
 from rest_framework import generics, viewsets
 from django.contrib.auth.models import User
 from account.models import Organization, Profile
-from account.api.serializers import OrganizationSerializer, UserSerializer
+from account.api.serializers import OrganizationSerializer, ProfileSerializer
 
 
 class OrganizationView(viewsets.ReadOnlyModelViewSet):
@@ -11,6 +11,6 @@ class OrganizationView(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrganizationSerializer
 
 
-class UserView(viewsets.ReadOnlyModelViewSet):
+class ProfileView(viewsets.ReadOnlyModelViewSet):
     queryset = Profile.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = ProfileSerializer

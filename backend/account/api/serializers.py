@@ -9,15 +9,16 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'info']
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ['user', 'organization', 'patronymic', 'phone']
-
-
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
 
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile']
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Profile
+        fields = ['user', 'organization', 'patronymic', 'phone']
