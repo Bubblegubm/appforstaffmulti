@@ -4,6 +4,9 @@ from django.contrib.auth import authenticate, login
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 @login_required
@@ -14,23 +17,24 @@ def dashboard(request):
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
 
+@csrf_exempt
 def register(request):
     """
     Функция для регистрации пользователя.
     """
     if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-
+        data = json.loads(request.body) # Использование JSON
+        user_form = UserRegistrationForm(data)
         if user_form.is_valid():
             new_user = user_form.save(commit=False)
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
-
             Profile.objects.create(user=new_user)
-            return render(request, 'account/register_done.html', {'new_user': new_user})
+            return JsonResponse({'status': 'success'}, status=200) # Использование JSON
+        else:
+            return JsonResponse({'errors': user_form.errors}, status=400) # Использование JSON
     else:
-        user_form = UserRegistrationForm()
-    return render(request, 'account/register.html', {'user_form': user_form})
+        return JsonResponse({'error': 'Invalid method'}, status=405) # Использование JSON
 
 
 def user_login(request):

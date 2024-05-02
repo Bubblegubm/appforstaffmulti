@@ -12,7 +12,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('user', 'organization', 'patronymic', 'phone')
+        fields = ['user', 'organization', 'patronymic', 'phone']
 
 
 class UserSerializer(serializers.ModelSerializer):
