@@ -7,8 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-import logging
-logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -26,7 +24,6 @@ def register(request):
     """
     if request.method == 'POST':
         data = json.loads(request.body) # Использование JSON
-        logger.debug(data)
         user_form = UserRegistrationForm(data)
         if user_form.is_valid():
             new_user = user_form.save(commit=False)
@@ -40,28 +37,25 @@ def register(request):
         return JsonResponse({'error': 'Invalid method'}, status=405) # Использование JSON
 
 
+@csrf_exempt
 def user_login(request):
-    """
-    Функция для входа пользователя.
-    """
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        user = authenticate(request, username=username, password=password)
 
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(request, username=cd['username'], password=cd['password'])
-
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponse('Authenticated successfully')
-                else:
-                    return HttpResponse('Disabled account')
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return JsonResponse({'status': 'Authenticated successfully'})
             else:
-                return HttpResponse('Invalid login')
+                return JsonResponse({'status': 'Disabled account'})
+        else:
+            return JsonResponse({'status': 'Invalid login'})
+
     else:
-        form = LoginForm()
-    return render(request, 'account/login.html', {'form': form})
+        return JsonResponse({'status': 'Invalid method'})
 
 
 @login_required
