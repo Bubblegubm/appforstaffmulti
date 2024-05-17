@@ -16,6 +16,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 CORS_ALLOW_ALL_ORIGINS = True # Access-Control-Allow-Origin - требует заголовки CORS
+CORS_ORIGIN_WHITELIST = ['http://localhost:64299']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -28,9 +29,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['26.239.49.10', '127.0.0.1', 'localhost']
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:54799', 'https://localhost:54799']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
 CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = None
 CSRF_USE_SESSIONS = False
 SESSION_COOKIE_DOMAIN = 'localhost'
 SESSION_COOKIE_HTTPONLY = True
@@ -46,18 +47,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware', # - надо разбираться с csrf, блочит доступ
+    'django.middleware.csrf.CsrfViewMiddleware', # - надо разбираться с csrf, блочит доступ
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -131,8 +133,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGIN_REDIRECT_URL = 'dashboard'
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
-

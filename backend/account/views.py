@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
+from requests import Response
+
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 import json
 
 
@@ -17,7 +21,12 @@ def dashboard(request):
     return render(request, 'account/dashboard.html', {'section': 'dashboard'})
 
 
-@csrf_exempt
+@ensure_csrf_cookie
+def get_csrf(request):
+    if request.method == 'GET':
+        return JsonResponse({"details": "CSRF cookie set"})
+
+
 def register(request):
     """
     Функция для регистрации пользователя.
@@ -37,12 +46,12 @@ def register(request):
         return JsonResponse({'error': 'Invalid method'}, status=405) # Использование JSON
 
 
-@csrf_exempt
 def user_login(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         username = data.get('username')
         password = data.get('password')
+        print(username, password)
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
